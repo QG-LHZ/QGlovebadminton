@@ -1,0 +1,75 @@
+# 学习预告
+因为虽然学了一点c语言语法，但还是选择自己擅长的python来编程。
+
+
+### 题目一
+n = int(input())
+dragon_str = 'L' + 'o' * n + 'ng'
+print(dragon_str) 
+
+
+#题目二
+# 获取测试用例的数量
+t = int(input())
+# 循环处理每个测试用例
+for _ in range(t):
+    # 输入一个字符串
+    s = input()
+    # 将字符串转换为小写后与'yes'进行比较
+    if s.lower() == 'yes':
+        # 如果转换后等于'yes'，则输出'YES'
+        print('YES')
+    else:
+        # 否则输出'NO'
+        print('NO')  
+###题目三
+  def is_rule_accepted(n, m, k, records):
+    # 记录符合民意的天数
+    days_accepted = 0
+    
+    # 遍历每一天的规则遵守情况
+    for record in records:
+        # 统计有多少人遵守规则 k
+        count = record.count(k)
+        
+        # 判断是否有大于等于一半的人遵守规则 k
+        if count * 2 >= n:
+            days_accepted += 1
+    
+    # 判断符合民意的天数是否超过一半
+    if days_accepted * 2 >= m:
+        return "YES"
+    else:
+        return "NO"
+
+# 输入读取
+n, m, k = map(int, input().split())
+records = [list(map(int, input().split())) for _ in range(m)]
+
+# 输出结果
+print(is_rule_accepted(n, m, k, records))
+
+#题目四
+# 获取测试用例的数量
+t = int(input())
+# 循环处理每个测试用例
+for _ in range(t):
+    # 输入两个整数n和m，分别表示歌曲数量和每种难度歌曲的最少数量
+    n, m = map(int, input().split())
+    # 输入一个字符串，表示歌曲的难度分布
+    a = input()
+    # 定义一个字符串，包含所有可能的歌曲难度等级
+    difficulties = 'ABCDEFG'
+    # 初始化计数器，用于记录需要增加的歌曲数量
+    count = 0
+    # 遍历每种难度等级
+    for diff in difficulties:
+        # 如果当前难度等级的歌曲数量小于m
+        if a.count(diff) < m:
+            # 则将需要增加的数量累加到count中
+            count += m - a.count(diff)
+    # 输出需要增加的歌曲总数
+    print(count)
+
+#学习总结
+
