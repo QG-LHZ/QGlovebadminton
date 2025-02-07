@@ -1,0 +1,186 @@
+import heapq
+
+def priority_queue_operations():
+    max_heap = []
+    
+    while True:
+        operation = input().strip()
+        
+        if operation.startswith("insert"):
+            _, k = operation.split()
+            k = int(k)
+            heapq.heappush(max_heap, -k)
+        elif operation == "extract":
+            if max_heap:
+                max_value = -heapq.heappop(max_heap)
+                print(max_value)
+            else:
+                print("Heap is empty!")
+        elif operation == "end":
+            break
+        else:
+            print("Invalid operation!")
+
+priority_queue_operations()
+
+总结
+这段代码通过 heapq 模块实现了优先队列的功能，利用取负值的方式模拟最大堆。它能够高效地处理插入和提取最大值的操作，适用于题目中描述的大规模输入场景。
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+
+const int MAXN = 1e5 + 10; // 数组的最大长度
+const int MAXLOG = 20;     // 最大幂次（log2(MAXN) + 1）
+
+int st[MAXN][MAXLOG]; // ST 表
+int log2_table[MAXN]; // 预处理 log2 的值
+
+// 快速读入函数
+inline int read() {
+    int x = 0, f = 1;
+    char ch = getchar();
+    while (ch < '0' || ch > '9') {
+        if (ch == '-') f = -1;
+        ch = getchar();
+    }
+    while (ch >= '0' && ch <= '9') {
+        x = x * 10 + ch - '0';
+        ch = getchar();
+    }
+    return x * f;
+}
+
+// 预处理 log2 表
+void preprocess_log2_table(int n) {
+    for (int i = 2; i <= n; ++i) {
+        log2_table[i] = log2_table[i / 2] + 1;
+    }
+}
+
+// 预处理 ST 表
+void build_st_table(const vector<int>& arr, int n) {
+    // 初始化第一列（区间长度为 1）
+    for (int i = 0; i < n; ++i) {
+        st[i][0] = arr[i];
+    }
+
+    // 填充 ST 表
+    for (int j = 1; (1 << j) <= n; ++j) {
+        for (int i = 0; i + (1 << j) - 1 < n; ++i) {
+            st[i][j] = max(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+        }
+    }
+}
+
+// 查询区间 [l, r] 的最大值
+int query(int l, int r) {
+    int j = log2_table[r - l + 1];
+    return max(st[l][j], st[r - (1 << j) + 1][j]);
+}
+
+int main() {
+    ios::sync_with_stdio(false); // 加快输入输出速度
+    cin.tie(0);
+
+    int n, m;
+    n = read();
+    m = read();
+
+    vector<int> arr(n);
+    for (int i = 0; i < n; ++i) {
+        arr[i] = read();
+    }
+
+    preprocess_log2_table(n);
+    build_st_table(arr, n);
+
+    while (m--) {
+        int l = read();
+        int r = read();
+        cout << query(l - 1, r - 1) << '\n'; // 输入的 l 和 r 是从 1 开始的，需要减 1 转换为 0 开始的索引
+    }
+
+    return 0;
+}
+以下是实现 ST 表的关键点：
+快速读入：
+使用 getchar() 或其他快速读入方法，避免 cin 的性能开销。
+预处理 log2 表：
+预处理一个 log2_table，存储每个整数的以 2 为底的对数值，用于快速计算幂次。
+构建 ST 表：
+初始化第一列（区间长度为 1 的情况）。
+使用递推公式填充 ST 表。
+查询：
+使用 log2_table 快速计算幂次。
+查询两个重叠子区间的最大值。
+
+
+import heapq
+
+def min_energy(n, piles):
+    # 将所有果子堆的大小放入最小堆
+    heapq.heapify(piles)
+    total_energy = 0
+
+    # 进行 n-1 次合并
+    for _ in range(n - 1):
+        # 取出两个最小的堆
+        first = heapq.heappop(piles)
+        second = heapq.heappop(piles)
+        
+        # 合并两堆
+        merged = first + second
+        total_energy += merged
+        
+        # 将合并后的堆重新放回堆中
+        heapq.heappush(piles, merged)
+    
+    return total_energy
+使用优先队列（最小堆）：
+将所有果子堆的大小放入一个最小堆中。
+每次从堆中取出两个最小的堆，合并它们，并将合并后的堆重新放回堆中。
+记录每次合并的代价（即两堆的和），累加到总代价中。
+重复上述过程，直到堆中只剩下一个堆。
+
+# 主函数
+def main():
+    n = int(input().strip())
+    piles = list(map(int, input().strip().split()))
+    result = min_energy(n, piles)
+    print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+
+def josephus(n, m):
+    # 初始化人员编号
+    people = list(range(1, n + 1))
+    result = []  # 用于存储出圈人的编号
+    index = 0  # 当前报数的位置
+
+    while people:
+        # 计算出圈人的位置
+        index = (index + m - 1) % len(people)
+        # 将出圈人的编号加入结果列表
+        result.append(people.pop(index))
+    
+    return result
+
+# 主函数
+def main():
+    n, m = map(int, input().split())
+    result = josephus(n, m)
+    print(" ".join(map(str, result)))
+
+if __name__ == "__main__":
+    main()
+
+模拟过程：
+使用一个列表（或数组）来表示围成一圈的人，初始时编号为 1 到 n。
+每次从当前报数的人开始，数到第 m 个人，将其标记为出圈。
+更新当前报数的位置，继续报数，直到所有人都出圈。
