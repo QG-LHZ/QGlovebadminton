@@ -1,1 +1,319 @@
+1. 有理数取余
+Description
+给出一个有理数 c=a/b​，求 c mod 19260817 的值。
+
+这个值被定义为 bx≡a(mod19260817) 的解。
+
+Input
+一共两行。
+
+第一行，一个整数 a。
+第二行，一个整数 b。
+
+Output
+一个整数，代表求余后的结果。如果无解，输出 Angry!。
+
+Sample 1
+Input	Output
+233
+666
+18595654
+Hint
+对于所有数据，保证 0≤a≤，1≤b≤，且 a,b 不同时是 19260817 的倍数。
+
+代码
+
+#include <stdio.h>
+#include <string.h>
+ 
+#define MOD 19260817
+ 
+// 扩展欧几里得算法
+long long exgcd(long long a, long long b, long long *x, long long *y) {
+    if (b == 0) { 
+        *x = 1;
+        *y = 0;
+        return a;
+    }
+    long long gcd = exgcd(b, a % b, x, y);
+    long long temp = *x;
+    *x = *y;
+    *y = temp - (a / b) * (*y);
+    return gcd;
+}
+ 
+// 字符串转整数（模 MOD）
+long long strToInt(char *str) {
+    long long res = 0;
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        res = (res * 10 + (str[i] - '0')) % MOD;
+    }
+    return res;
+}
+ 
+// 求解同余方程 bx ≡ a (mod MOD)
+long long solve(long long a, long long b) {
+    long long x, y;
+    long long gcd = exgcd(b, MOD, &x, &y);
+    if (a % gcd != 0) {
+        return -1; // 无解
+    }
+    x = (x % MOD + MOD) % MOD;
+    x = (x * (a / gcd)) % MOD;
+    return x;
+}
+ 
+int main() {
+    char a_str[10005], b_str[10005];
+    // 读取输入
+    scanf("%s", a_str);
+    scanf("%s", b_str);
+ 
+    // 将字符串转换为整数（模 MOD）
+    long long a = strToInt(a_str);
+    long long b = strToInt(b_str);
+ 
+    // 求解同余方程
+    long long result = solve(a, b);
+ 
+    if (result == -1) {
+        printf("Angry!\n");
+    } else {
+        printf("%lld\n", result);
+    }
+ 
+    return 0;
+}
+2.Minimal Coprime
+今天，小约翰用尽了他的所有积蓄来购买一个区间。他想在这个区间上建造一座房子。
+
+一个正整数的区间 [l,r] 被称为 互质，如果 l 和 r 是互质的∗。
+
+一个互质区间 [l,r] 被称为 最小互质，如果它不包含† 任何不等于它自身的互质区间。为了更好地理解这个说法，你可以参考备注。
+
+给定 [l,r]，一个正整数的区间，找出包含在 [l,r] 中的最小互质区间的数量。
+
+∗两个整数 a 和 b 是互质的，如果它们只有一个正的公约数。例如，数字 2 和 4 不是互质的，因为它们都被 2 和 1 整除，但数字 7 和 9 是互质的，因为它们唯一的正公约数是 1。
+
+†一个区间 [l′,r′] 包含在区间 [l,r] 中，当且仅当 l ≤ l′ ≤ r′ ≤ r 。
+
+输入
+每个测试包含多个测试用例。第一行包含测试用例的数量 t (1≤t≤1001)。接下来是测试用例的描述。
+
+每个测试用例的唯一一行由两个整数 l 和 r (1≤l≤r≤109
+10
+9
+) 组成。
+
+输出
+对于每个测试用例，在单独的一行上输出包含在 [l,r] 中的最小互质区间的数量。
+
+示例
+Input	Output
+6
+1 2
+1 10
+49 49
+69 420
+1 1
+9982 44353
+1
+9
+0
+351
+1
+34371
+备注
+在第一个测试用例中，给定的区间是 [1,2][1,2]。包含在 [1,2][1,2] 中的区间如下。
+
+[1,1]: 这个区间是互质的，因为数字 1 和 1 是互质的，并且这个区间内部不包含其他区间。因此，[1,1] 是最小互质的。
+[1,2]: 这个区间是互质的。然而，由于它包含 [1,1]，而 [1,1] 也是互质的，[1,2] 不是最小互质的。
+[2,2]: 这个区间不是互质的，因为 2 和 2 共享 2 个正的公约数：1 和 2。
+因此，区间 [1,2] 包含 1 个最小互质区间。
+
+代码
+
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define int long long
+typedef pair<int, int> PII;
+const int N = 2e5 + 10, INF = 0x3f3f3f3f;
+const int mod = 998244353;
+#define pb push_back
+#define  vi vector<int>
+#define  vvi vector<vector<int>>
+#define  vii vector<pair<int, int>>
+#define ff first 
+#define ss second 
+// ++   ~!    */+-    <<>>    <>  ==   &^|   &&|| =
+ 
+ 
+ 
+void solve() 
+{
+    int n, m;cin >> n >> m;
+    if (n == m && n == 1)cout << 1 << endl;
+    else cout << m - n << endl;
+}
+ 
+signed main()
+{
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+ 
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+ 
+    return 0;
+}
+3.素数密度
+Description
+给定 L,R，请计算区间 [L,R] 中素数的个数。
+
+1≤L≤R<，R−L≤1。
+
+Input
+第一行，两个正整数 L 和 R。
+
+Output
+一行，一个整数，表示区间中素数的个数。
+
+Sample 1
+Input	Output
+2 11
+5
+代码
+
+#include<stdio.h>
+ 
+#define MAX 1000009
+ 
+int a[MAX];
+ 
+int aa(int l,int r){
+	int range=r-l+1;
+	long long i;
+	
+	// 初始化标记数组，默认都为素数
+	for(i=0;i<range;i++){
+		a[i]=1;
+	}
+	
+	// 处理 1 不是素数的情况
+	if(l==1)a[0]=0;
+	
+	// 从 2 开始筛选素数
+	for(i=2;i*i<r;i++){
+		// 找到第一个大于等于 L 且是 i 的倍数的数
+		long long start=(l+i-1)/i*i;
+		if(start==i)start+=i;
+		// 标记 i 的倍数为非素数
+		while(start<=r){
+			a[start-l]=0;
+			start+=i;
+		}
+	}
+	int n=0;
+	// 统计素数个数
+	for(i=0;i<range;i++){
+		n+=a[i];
+	}
+	return n;
+}
+ 
+int main(){
+	int l,r;
+	scanf("%d%d",&l,&r);
+	int n=aa(l,r);
+	printf("%d",n);
+}
+4.最大公约数和最小公倍数问题
+Description
+输入两个正整数 x0​,y0​，求出满足下列条件的 P,Q 的个数：
+
+P,Q 是正整数。
+
+要求 P,Q 以 x0x 为最大公约数，以 y0​ 为最小公倍数。
+
+试求：满足条件的所有可能的 P,Q 的个数。
+
+Input
+一行两个正整数 x0​,y0​。
+
+Output
+一行一个数，表示求出满足条件的 P,Q 的个数。
+
+Sample 1
+Input	Output
+3 60
+4
+Hint
+P,Q 有 4 种：
+
+3,60。
+15,12。
+12,15。
+60,3。
+对于 100% 的数据，2≤x0,y0≤。
+
+【题目来源】
+
+NOIP 2001 普及组第二题
+
+代码
+
+#include<stdio.h>
+ 
+#define MAX 100009
+ 
+int a[MAX];
+int x,y,n;
+ 
+//找出区间【x,y】内以x为因子，且为y的因子的数 
+void aa(){
+	int i;
+	n=0;
+	for(i=x;i<=y;i+=x){
+		if(y%i==0){
+			a[n]=i;
+			n++;
+		}
+	}
+} 
+ 
+//辗转相除法求两个数的最大公约数 
+int gcd(int a,int b){
+	while(b!=0){
+		int t=b;
+		b=a%b;
+		a=t;
+	}
+	return a;
+} 
+ 
+//统计满足题意的个数
+int bb(){
+	int i,j,c=0,q,w;
+	for(i=0;i<n-1;i++){
+		for(j=i+1;j<n;j++){
+			q=gcd(a[i],a[j]);
+			//w为a[i],a[j]的最小公倍数 
+			w=a[i]*a[j]/q;
+			if(q==x&&w==y)c++; 
+		}
+	} 
+	return c;
+} 
+ 
+int main(){
+	scanf("%d%d",&x,&y);
+	aa();
+	if(x==y)printf("1");
+	else{
+		printf("%d\n",bb()*2);
+	}
+	return 0;
+}
 
