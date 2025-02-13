@@ -1,0 +1,570 @@
+1.自然数的拆分问题
+Description
+任何一个大于 1 的自然数 n，总可以拆分成若干个小于 n 的自然数之和。现在给你一个自然数 n，要求你求出 n 的拆分成一些数字的和。每个拆分后的序列中的数字从小到大排序。然后你需要输出这些序列，其中字典序小的序列需要优先输出。
+
+Input
+输入：待拆分的自然数 nn。
+
+Output
+输出：若干数的加法式子。
+
+Sample 1
+Input	Output
+7
+1+1+1+1+1+1+1
+1+1+1+1+1+2
+1+1+1+1+3
+1+1+1+2+2
+1+1+1+4
+1+1+2+3
+1+1+5
+1+2+2+2
+1+2+4
+1+3+3
+1+6
+2+2+3
+2+5
+3+4
+Hint
+数据保证，2≤n≤8。
+
+代码
+
+#include <stdio.h>
+ 
+#define MAX_LEN 100
+ 
+// 用于存储当前拆分序列
+int path[MAX_LEN];
+// 当前拆分序列的长度
+int len;
+// 目标数
+int n;
+ 
+// 回溯函数，用于生成所有可能的拆分
+void backtrack(int currentSum, int start) {
+    // 如果当前拆分序列的和等于目标数 n
+    if (currentSum == n) {
+        // 输出拆分序列
+        for (int i = 0; i < len; i++) {
+            if (i > 0) {
+                printf("+");
+            }
+            printf("%d", path[i]);
+        }
+        printf("\n");
+        return;
+    }
+    // 从 start 开始尝试添加数字到拆分序列中
+    for (int i = start; i < n; i++) {
+        if (currentSum + i <= n) {
+            // 将数字 i 添加到当前拆分序列中
+            path[len] = i;
+            len++;
+            // 递归调用，继续生成拆分序列
+            backtrack(currentSum + i, i);
+            // 回溯，移除最后添加的数字
+            len--;
+        }
+    }
+}
+ 
+int main() {
+    // 读取输入的目标数 n
+    scanf("%d", &n);
+    // 初始化当前拆分序列的长度为 0
+    len = 0;
+    // 调用回溯函数开始生成拆分序列
+    backtrack(0, 1);
+    return 0;
+}
+2.填涂颜色
+Description
+由数字 0 组成的方阵中，有一任意形状的由数字 1 构成的闭合圈。现要求把闭合圈内的所有空间都填写成 2。例如：6×6 的方阵（n=6），涂色前和涂色后的方阵如下：
+
+如果从某个 0 出发，只向上下左右 4 个方向移动且仅经过其他 0 的情况下，无法到达方阵的边界，就认为这个 0 在闭合圈内。闭合圈不一定是环形的，可以是任意形状，但保证闭合圈内的 0 是连通的（两两之间可以相互到达）。
+
+0 0 0 0 0 0
+0 0 0 1 1 1
+0 1 1 0 0 1
+1 1 0 0 0 1
+1 0 0 1 0 1
+1 1 1 1 1 1
+0 0 0 0 0 0
+0 0 0 1 1 1
+0 1 1 2 2 1
+1 1 2 2 2 1
+1 2 2 1 2 1
+1 1 1 1 1 1
+Input
+每组测试数据第一行一个整数 n(1≤n≤30)。
+
+接下来 n 行，由 0 和 1 组成的 n×n 的方阵。
+
+方阵内只有一个闭合圈，圈内至少有一个 0。
+
+Output
+已经填好数字 2 的完整方阵。
+
+Sample 1
+Input	Output
+6
+0 0 0 0 0 0
+0 0 1 1 1 1
+0 1 1 0 0 1
+1 1 0 0 0 1
+1 0 0 0 0 1
+1 1 1 1 1 1
+0 0 0 0 0 0
+0 0 1 1 1 1
+0 1 1 2 2 1
+1 1 2 2 2 1
+1 2 2 2 2 1
+1 1 1 1 1 1
+Hint
+对于 100% 的数据，1≤n≤30。
+
+代码
+
+#include<stdio.h>
+ 
+#define MAX 36
+ 
+int n;
+int map[MAX][MAX]; //储存矩阵 
+int visit[MAX][MAX]; //标记是否访问过 
+ 
+// 深度优先搜索函数
+void dfs(int x,int y){
+	// 判断越界、是否为黑色点或已经访问过
+	if(x<0||x>=n||y<0||y>=n||map[x][y]==1||visit[x][y]==3){
+		return;
+	}
+	visit[x][y]=3; //标记为已访问 
+	// 向四个方向进行搜索
+	dfs(x-1,y);
+	dfs(x+1,y);
+	dfs(x,y-1);
+	dfs(x,y+1);
+}
+ 
+int main(){
+	scanf("%d",&n);
+	int i,j,x,y;
+	
+	for(i=0;i<n;i++){
+		for(j=0;j<n;j++){
+			scanf("%d",&map[i][j]);
+		}
+	}
+	
+	// 从四个边界开始进行深度优先搜索
+	for(i=0;i<n;i++){
+		dfs(0,i);
+		dfs(n-1,i);
+		dfs(i,0);
+		dfs(i,n-1);
+	}
+	
+	// 遍历矩阵，将未访问的白色点填充为 2
+	for(i=0;i<n;i++){
+		for(j=0;j<n;j++){
+			if(j!=n-1){
+				if(visit[i][j]==3)printf("0 ");
+				else if(map[i][j]==1)printf("1 ");
+				else printf("2 ");
+			}
+			else {
+				if(visit[i][j]==3)printf("0");
+				else if(map[i][j]==1)printf("1");
+				else printf("2");
+			}
+		}
+		printf("\n");
+	}
+}
+3.显示图像
+Description
+古老的显示屏是由 N×M 个像素（Pixel）点组成的。一个像素点的位置是根据所在行数和列数决定的。例如 P(2,1) 表示第 2 行第 1 列的像素点。那时候，屏幕只能显示黑与白两种颜色，人们用二进制 0 和 1 来表示。0 表示黑色，1 表示白色。当计算机发出一个指令：P(x,y)=1，则屏幕上的第 x 行第 y 列的阴极射线管就开始工作，使该像素点显示白色，若 P(x,y)=0，则对应位置的阴极射线管不工作，像素点保持黑色。在某一单位时刻，计算机以 N×M 二维 01 矩阵的方式发出显示整个屏幕图像的命令。
+
+例如，屏幕是由 3×4 的像素点组成，在某单位时刻，计算机发出如下命令：
+
+
+对应屏幕显示应为：
+
+
+
+假设放大后，一个格子表示一个像素点。
+
+由于未知的原因，显示黑色的像素点总是受显示白色的像素点的影响——可能是阴极射线管工作的作用。并且，距离越近，影响越大。这里的距离定义如下：
+
+设有像素点 P1(x1,y1) 和像素点 P2(x2,y2)，则它们之间的距离 D(P1,P2)=∣x1−x2∣+∣y1−y2∣。
+
+在某一时刻，计算机发出显示命令后，科学家们期望知道，每个像素点和其最近的显示白色的像素点之间的最短距离是多少——科学家们保证屏幕上至少有一个显示白色的像素点。
+
+上面的例子中，像素 P(1,1) 与最近的白色像素点之间的距离为 3，而像素 P(3,2) 本身显示白色，所以最短距离为 0。
+
+Input
+第一行有两个数字，N 和 M (1≤N,M≤182)，表示屏幕的规格。
+
+以下 N 行，每行 M 个数字，0 或 1。为计算机发出的显示命令。
+
+Output
+输出文件有 N 行，每行 M 个数字，中间用 1 个空格分开。第 i 行第 j 列的数字表示距像素点 P(i,j) 最近的白色像素点的最短距离。
+
+Sample 1
+Input	Output
+3 4
+0001
+0011
+0110
+3 2 1 0
+2 1 0 0
+1 0 0 1
+Hint
+对于 30% 的数据：N×M≤10000；
+对于 100% 的数据：N×M≤。
+代码
+
+#include<iostream>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+#include<vector>
+ 
+using namespace std;
+ 
+int n, m;
+ 
+char a[1005][1005] = { 0 }; //读入
+bool memo[1005][1005];      //储存搜索状态
+int ans[1005][1005] = { 0 };
+vector<pair<int, int>>v;    //储存对组的队列
+ 
+bool edge(int x, int y)  //判断(x，y)是否越界
+{
+    if (x <= 0 || y <= 0 || x >= n + 1 || y >= m + 1)return false;  //越界
+    return true;  //不越界
+}
+ 
+int main()
+{
+    memset(memo, false, sizeof(memo));  //默认将memo全部标记为false
+    cin >> n >> m;
+    for(int i=1;i<=n;i++)
+        for(int j=1;j<=m;j++)
+        {
+            cin >> a[i][j];   //我是读入
+            if(a[i][j]=='0'){ }  //黑色，默认为false，未搜索过
+            else              //白色，ans一定是0，标记为搜索过，入队
+            {
+                memo[i][j] = true;
+                v.push_back(make_pair(i, j));
+            }
+        }
+ 
+    int d_x[5] = { 0,1,-1,0,0 };     //方向数组
+    int d_y[5] = { 0,0,0,1,-1 };
+    for(int i=0;i<=v.size()-1; i++)   //搜索队列
+        for(int j=1;j<=4;j++)        //搜索 上下左右 四个方向
+        {
+            int t_x = v[i].first + d_x[j];
+            int t_y = v[i].second + d_y[j];
+            if (edge(t_x, t_y) && memo[t_x][t_y] == false) //未搜索过，搜！
+            {
+                ans[t_x][t_y] = ans[v[i].first][v[i].second] + 1;
+                memo[t_x][t_y] = true;
+                v.push_back(make_pair(t_x, t_y));
+            }
+        }
+ 
+    for(int i=1;i<=n;i++)
+    {
+        for (int j = 1; j <= m; j++)cout << ans[i][j] << " ";  //输出哈
+        cout << endl;
+    }
+    return 0;
+}
+4.健康的荷斯坦奶牛 Healthy Holsteins
+Description
+农民 John 以拥有世界上最健康的奶牛为傲。他知道每种饲料中所包含的牛所需的最低的维他命量是多少。请你帮助农夫喂养他的牛，以保持它们的健康，使喂给牛的饲料的种数最少。
+
+给出牛所需的最低的维他命量，输出喂给牛需要哪些种类的饲料，且所需的饲料剂量最少。
+
+维他命量以整数表示，每种饲料最多只能对牛使用一次，数据保证存在解。
+
+Input
+第一行一个整数 v，表示需要的维他命的种类数。
+第二行 v 个整数，表示牛每天需要的每种维他命的最小量。
+
+第三行一个整数 g，表示可用来喂牛的饲料的种数。
+下面 g 行，第 n 行表示编号为 n 饲料包含的各种维他命的量的多少。
+
+Output
+输出文件只有一行，包括牛必需的最小的饲料种数 p；后面有 p 个数，表示所选择的饲料编号（按从小到大排列）。
+
+如果有多个解，输出饲料序号最小的（即字典序最小）。
+
+Sample 1
+Input	Output
+4
+100 200 300 400
+3
+50  50  50  50
+200 300 200 300
+900 150 389 399
+2 1 3
+Hint
+【数据范围】
+对于 100% 的数据，1≤v≤25，1≤g≤15。
+输入的所有整数在 [1,1000] 范围内。
+
+代码
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <stack>
+#include <string.h>
+#include <vector>
+#include <cstring>
+using namespace std;
+int n,m,k=0,ans=100000,sum=0;
+int a[30],b[20][30],c[30];
+int vis[30];
+int fun(int r) {
+    for(int i=0; i<n; i++) {
+        int sum=0;
+        for(int j=0; j<r; j++) {
+            sum+=b[c[j]][i];
+        }
+        if(sum<a[i])return 0;
+    }
+    return 1;
+}
+void dfs(int s,int num) {
+    if(s==m) {
+        if(fun(num)) {
+            if(num<ans) {
+                ans=num;
+                for(int t=0; t<num; t++) {
+                    vis[t]=c[t]+1;
+                }
+            }
+        }
+        return ;
+    }
+    c[num]=s;
+    dfs(s+1,num+1);
+    c[num]=0;
+    dfs(s+1,num);
+}
+int main() {
+    cin>>n;
+    for(int i=0; i<n; i++) {
+        cin>>a[i];
+    }
+    cin>>m;
+    for(int i=0; i<m; i++) {
+        for(int j=0; j<n; j++) {
+            cin>>b[i][j];
+        }
+    }
+    dfs(0,0);
+    cout<<ans<<" ";
+    for(int i=0; i<ans; i++)
+        cout<<vis[i]<<" ";
+    cout<<endl;
+    return 0;
+}
+5.GRZ-Ridges and Valleys
+ 
+给定一个 n×n 的网格状地图，每个方格 (i,j) 有一个高度 wij​。如果两个方格有公共顶点，则它们是相邻的。
+
+定义山峰和山谷如下：
+
+均由地图上的一个连通块组成；
+所有方格高度都相同；
+周围的方格（即不属于山峰或山谷但与山峰或山谷相邻的格子）高度均大于山谷的高度，或小于山峰的高度。
+求地图内山峰和山谷的数量。特别地，如果整个地图方格的高度均相同，则整个地图既是一个山谷，也是一个山峰。
+
+输入格式
+第一行一个整数 n （2≤n≤1000），表示地图的大小。
+
+接下来 n 行每行 n 个整数表示地图。第 i 行有 n 个整数 wi1​,wi2​,…,win​(0≤wij​≤1 000 000 000)，表示地图第 i 行格子的高度。
+
+输出格式
+输出一行两个整数，分别表示山峰和山谷的数量。
+
+样例解释
+
+
+
+
+输入输出样例
+输入 #1
+
+5
+8 8 8 7 7
+7 7 8 8 7
+7 7 7 7 7
+7 8 8 7 8
+7 8 8 8 8
+输出 #1
+
+2 1
+输入 #2
+
+5
+5 7 8 3 1
+5 5 7 6 6
+6 6 6 2 8
+5 7 2 5 8
+7 1 0 1 7
+代码
+
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+int mp[1005][1005];//二维数组存图
+int vis[1005][1005];//访问数组  
+int dx[9]={0,-1,-1,-1,0,0,1,1,1};
+int dy[9]={0,-1,0,1,-1,1,-1,0,1};//相邻的八个点
+int ans1,ans2,flag;//山峰，山谷,标记（1为山谷，2为山峰，-1啥也不是） 
+void DFS(int x,int y){
+	for(int i=1;i<=8;i++){//搜索相邻的八个点 
+		int xx=x+dx[i],yy=y+dy[i];
+		if(!(xx>=1&&xx<=n&&yy>=1&&yy<=n))continue;//越界，跳过 
+		else if(mp[x][y]==mp[xx][yy]&&vis[xx][yy]==0){//没去过，搜一下 
+			vis[xx][yy]=1;
+			DFS(xx,yy);	
+		}else if(mp[x][y]<mp[xx][yy]&&flag==2){ 
+			flag=-1;
+		}else if(mp[x][y]>mp[xx][yy]&&flag==1){//与本来状态冲突，即，啥也不是 
+			flag=-1;
+		}else if(flag==0){//赋初始状态，是山峰还是山谷 
+			if(mp[x][y]>mp[xx][yy])flag=2;
+			if(mp[x][y]<mp[xx][yy])flag=1;
+		}
+	}
+} 
+int main(){
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			cin>>mp[i][j];
+		}
+	}
+	int x=mp[1][1];
+	flag=1;
+	for(int i=2;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			if(mp[i][j]!=x){
+				flag=0;
+				break;
+			}
+		}
+		if(flag==0)break;
+	}
+	if(flag==1){
+		cout<<"1 1";
+		return 0;//特判，所有高度相同，既是山峰也是山谷，各为1 
+	}
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			if(!vis[i][j]){
+				flag=0;
+				vis[i][j]=1;
+				DFS(i,j); 
+				if(flag==2)ans1++;
+				if(flag==1)ans2++;
+			}
+		}
+	}
+	cout<<ans1<<" "<<ans2;
+	return 0;
+}
+6.八皇后 Checker Challenge
+Description
+一个如下的 6×6 的跳棋棋盘，有六个棋子被放置在棋盘上，使得每行、每列有且只有一个，每条对角线（包括两条主对角线的所有平行线）上至多有一个棋子。
+
+
+
+上面的布局可以用序列 2 4 6 1 3 5 来描述，第 i 个数字表示在第 i 行的相应位置有一个棋子，如下：
+
+行号 1 2 3 4 5 6
+
+列号 2 4 6 1 3 5
+
+这只是棋子放置的一个解。请编一个程序找出所有棋子放置的解。
+并把它们以上面的序列方法输出，解按字典顺序排列。
+请输出前 3 个解。最后一行是解的总个数。
+
+Input
+一行一个正整数 n，表示棋盘是 n×n 大小的。
+
+Output
+前三行为前三个解，每个解的两个数字之间用一个空格隔开。第四行只有一个数字，表示解的总数。
+
+Sample 1
+Input	Output
+6
+2 4 6 1 3 5
+3 6 2 5 1 4
+4 1 5 2 6 3
+4
+Hint
+【数据范围】
+对于 100% 的数据，6≤n≤13。
+
+代码
+
+#include<stdio.h>
+int a[100],b[100],c[100],d[100];
+int n,s;
+void fun(int k)//k为行数 
+{
+	int i,j;
+	for(i=1;i<=n;i++)//遍历列 
+	{
+		if(b[i]==0&&c[i+k]==0&&d[i-k+n]==0)
+		{
+			//如果满足未被三个数组标记的条件，就用数组 a 记录下这个第 k 行的列数 
+			//并且把这个放置棋子的点标记 
+			a[k]=i;
+			b[i]=1;
+			c[i+k]=1;
+			d[i-k+n]=1;
+			if(k==n)
+			{
+				//题目要求输出前三个方案，每一行代表的数组 
+				s++;
+				//那就用一个 if 语句判断 
+				if(s<=3)
+				{
+					for(j=1;j<=n;j++)
+			    	printf("%d ",a[j]);
+			    	printf("\n");
+				}
+			}
+			//如果每行没有遍历到，则继续向下进入函数 
+			else
+			fun(k+1);
+			//出函数要把标记解除，否则会影响下一个循环 
+			b[i]=0;
+			c[i+k]=0;
+			d[i-k+n]=0;
+		}
+	}
+}
+int main()
+{
+	scanf("%d",&n);
+	fun(1);//从行数为 1 开始遍历 
+	printf("%d",s);//输出方案的个数 
+	return 0;
+}
+专题总结
+第一题而言，当我看到数据的范围是[2,8]时，我突然想到了直接把7个数据都枚举一遍，后来我也尝试了这种方法，可是说起来简单做起来难，它很容易乱、遗漏。
+
+而其他题目有的确实是有难度，不过我感觉搜索算法还挺有意思的，可以多练练。
