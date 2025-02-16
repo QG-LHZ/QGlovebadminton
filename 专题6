@@ -140,6 +140,10 @@ int main() {
 }
 
 题目4
+解题思路
+这是一个经典的 最长公共子序列（LCS） 问题。由于输入是两个排列，可以利用排列的性质将问题转化为 最长上升子序列（LIS） 问题。
+
+
 #include <iostream>
 #include <vector>
 #include <algorithm> // 用于lower_bound
