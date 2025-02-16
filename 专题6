@@ -138,3 +138,50 @@ int main() {
 
     return 0;
 }
+
+题目4
+#include <iostream>
+#include <vector>
+#include <algorithm> // 用于lower_bound
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n; // 输入排列的长度
+
+    vector<int> P1(n), P2(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> P1[i]; // 输入第一个排列
+    }
+    for (int i = 0; i < n; ++i) {
+        cin >> P2[i]; // 输入第二个排列
+    }
+
+    // 将 P1 中的元素映射到其下标
+    vector<int> pos(n + 1);
+    for (int i = 0; i < n; ++i) {
+        pos[P1[i]] = i;
+    }
+
+    // 将 P2 中的元素替换为 P1 中对应元素的下标
+    vector<int> seq(n);
+    for (int i = 0; i < n; ++i) {
+        seq[i] = pos[P2[i]];
+    }
+
+    // 求解 LIS
+    vector<int> dp;
+    for (int i = 0; i < n; ++i) {
+        auto it = lower_bound(dp.begin(), dp.end(), seq[i]);
+        if (it == dp.end()) {
+            dp.push_back(seq[i]);
+        } else {
+            *it = seq[i];
+        }
+    }
+
+    // 输出 LIS 的长度
+    cout << dp.size() << endl;
+
+    return 0;
+}
