@@ -1,0 +1,140 @@
+#include <iostream>
+#include <vector>
+#include <algorithm> // 用于max函数
+using namespace std;
+
+int maxSubArraySum(const vector<int>& nums) {
+    int current_sum = nums[0]; // 当前子段和
+    int max_sum = nums[0];     // 最大子段和
+
+    for (size_t i = 1; i < nums.size(); ++i) {
+        // 决定是继续扩展当前子段，还是从当前元素重新开始
+        current_sum = max(nums[i], current_sum + nums[i]);
+        // 更新最大子段和
+        max_sum = max(max_sum, current_sum);
+    }
+
+    return max_sum;
+}
+
+int main() {
+    int n;
+    cin >> n; // 输入序列长度
+    vector<int> a(n);
+
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i]; // 输入序列元素
+    }
+
+    int result = maxSubArraySum(a); // 计算最大子段和
+    cout << result << endl;         // 输出结果
+
+    return 0;
+}
+解题思路
+这是一个经典的动态规划问题，可以使用 Kadane算法 来解决。Kadane算法的核心思想是：
+
+遍历数组，维护一个当前子段和 current_sum。
+
+如果 current_sum 加上当前元素比当前元素本身还小，则从当前元素重新开始计算子段和。
+
+在遍历过程中，记录最大的子段和 max_sum。
+
+2.题目：采药问题（背包问题）
+题目描述：
+辰辰需要在有限的时间内采摘草药，每种草药需要一定的采摘时间，并且有一定的价值。目标是选择一些草药，使得在不超过总时间限制的情况下，采摘的草药总价值最大。
+
+输入：
+
+第一行包含两个整数 
+T
+T 和 
+M
+M，分别表示总时间和草药的数量。
+
+接下来的 
+M
+M 行，每行包含两个整数，分别表示采摘某株草药所需的时间和这株草药的价值。
+
+输出：
+
+输出一个整数，表示在规定时间内可以采到的草药的最大总价值。
+
+
+
+
+优化：
+可以将二维动态规划优化为一维数组，节省空间。
+#include <iostream>
+#include <vector>
+#include <algorithm> // 用于max函数
+using namespace std;
+
+int main() {
+    int T, M;
+    cin >> T >> M; // 输入总时间和草药数量
+
+    vector<int> time(M + 1), value(M + 1);
+    for (int i = 1; i <= M; ++i) {
+        cin >> time[i] >> value[i]; // 输入每株草药的时间和价值
+    }
+
+    // 定义动态规划数组
+    vector<int> dp(T + 1, 0);
+
+    // 动态规划求解
+    for (int i = 1; i <= M; ++i) {
+        for (int j = T; j >= time[i]; --j) {
+            dp[j] = max(dp[j], dp[j - time[i]] + value[i]);
+        }
+    }
+
+    // 输出结果
+    cout << dp[T] << endl;
+
+    return 0;
+}
+
+
+题目3
+#include <iostream>
+#include <vector>
+#include <algorithm> // 用于max函数
+using namespace std;
+
+int main() {
+    int n, W;
+    cin >> n >> W; // 输入宝物种数和最大载重
+
+    vector<int> v, w; // 存储拆分后的宝物价值和质量
+    for (int i = 0; i < n; ++i) {
+        int vi, wi, mi;
+        cin >> vi >> wi >> mi; // 输入每种宝物的价值、重量和数量
+
+        // 二进制拆分
+        for (int k = 1; k <= mi; k *= 2) {
+            v.push_back(vi * k);
+            w.push_back(wi * k);
+            mi -= k;
+        }
+        if (mi > 0) {
+            v.push_back(vi * mi);
+            w.push_back(wi * mi);
+        }
+    }
+
+    // 动态规划数组
+    vector<int> dp(W + 1, 0);
+
+    // 动态规划求解
+    for (size_t i = 0; i < v.size(); ++i) {
+        for (int j = W; j >= w[i]; --j) {
+            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+        }
+    }
+
+    // 输出结果
+    cout << dp[W] << endl;
+
+    return 0;
+}
