@@ -1,0 +1,612 @@
+1.Stockbroker Grapevine
+描述
+
+众所周知，股票经纪人对谣言反应过度。您已签订合同，开发一种在股票经纪人中传播虚假信息的方法，让您的雇主在股票市场上获得战术优势。为了获得最大的效果，您必须以最快的方式传播谣言。
+
+不幸的是，股票经纪人只信任来自他们的“可信来源”的信息，这意味着您在开始造谣时必须考虑他们的联系方式结构。特定的股票经纪人需要一定的时间才能将谣言传递给他的每个同事。您的任务是编写一个程序，告诉您选择哪个股票经纪人作为谣言的起点，以及谣言在整个股票经纪人社区传播所需的时间。此持续时间按最后一个人接收信息所需的时间来衡量。
+
+输入
+
+您的程序将为不同的股票经纪人集输入数据。每个集合都以一行 stockbrokers 的数量开始。在此之后是每个股票经纪人的一行，其中包含他们联系的人数、这些人是谁以及他们将消息传递给每个人所花费的时间。每个 stockbroker 行的格式如下：该行以联系人数 （n） 开头，后跟 n 对整数，每个联系人一对。每对首先列出一个表示联系人的数字（例如，“1”表示联系人集中的第 1 个），然后是向该联系人传递消息所花费的时间（以分钟为单位）。没有特殊的标点符号或间距规则。
+
+每个人的编号为 1 到股票经纪人的数量。传递消息所需的时间将介于 1 到 10 分钟（含）之间，联系人的数量将介于 0 到 1 之间，而不是股票经纪人的数量。股票经纪人的数量从 1 到 100 不等。输入由一组包含 0（零）人的股票经纪人终止。
+ 
+
+输出
+
+对于每组数据，您的程序必须输出一行，其中包含导致消息传输最快的人，以及在您将任何给定消息提供给此人后，最后一个人将收到任何给定消息之前多长时间，以整数分钟为单位。
+您的程序可能会收到一个连接网络，该网络将某些人排除在外，即某些人可能无法联系到。如果您的程序检测到这样的网络中断，只需输出消息 “disjoint”。请注意，将消息从人员 A 传递到人员 B 所花费的时间不一定与将消息从 B 传递到人员 A 所花费的时间相同（如果这种传输是可能的）。
+
+样例输入
+
+3
+2 2 4 3 5
+2 1 2 3 6
+2 1 2 2 2
+5
+3 4 4 2 8 5 3
+1 5 8
+4 1 6 4 10 2 7 5 2
+0
+2 2 5 1 5
+0
+样例输出
+
+3 2
+3 10
+代码
+
+#include<iostream>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+ 
+const int maxn = 105;
+#define inf 20  
+int c[maxn][maxn];
+int m,n;
+ 
+void floyd()  //最短路floyd算法
+{
+    int k,i,j;
+    for(k=1;k<=m;k++)
+    {
+        for(i=1;i<=m;i++)
+        {
+            for(j=1;j<=m;j++)
+            {
+                if(c[i][k] + c[k][j] < c[i][j])
+                {
+                    c[i][j] = c[i][k] + c[k][j];
+                    //cout<<c[i][j]<<endl;
+                }
+            }
+        }
+    }
+    int max_1,min_1,pos;
+    min_1 = inf;
+    pos = 0;
+    /*
+    要找的是最大路径的最小值，因为我们置两个经纪人如果不连通的话那么就是inf，inf不可能是最大路径的最小值，如果找不到一个经纪人
+    可以把所有经纪人联系在一起，那么就是破碎的网络，输出disjoint.
+    */
+    for(i=1;i<=m;i++)
+    {
+        max_1 = 0;
+        for(j=1;j<=m;j++)
+        {
+            if(c[i][j] > max_1 && i != j)
+            {
+                max_1 = c[i][j];
+            }
+        }
+        if(max_1 < min_1)
+        {
+            min_1 = max_1;
+            pos = i;
+        }
+    }
+    if(min_1 < inf)
+        cout<<pos<<" "<<min_1<<endl;
+    else
+        cout<<"disjoint"<<endl;
+}
+ 
+int main()
+{
+    int i,j;
+    int num1,num2;
+    //freopen("111","r",stdin);
+    while(cin>>m && m)
+    {
+        memset(c,inf,sizeof(c));
+        for(i=1;i<=m;i++)
+        {
+            cin>>n;
+            for(j=1;j<=n;j++)
+            {
+                cin>>num1>>num2;
+                c[i][num1] = num2;
+            }
+        }
+        for(i=1;i<=m;i++)
+        {
+            c[i][i] = 0;
+        }
+        floyd();
+    }
+    return 0;
+}
+2.树的直径
+一棵树的直径就是这棵树上存在的最长路径。现在有一棵 n 个节点的树，现在想知道这棵树的直径包含的边的个数是多少？
+
+
+
+如图所示的数据，这棵树的直径为 (1−2−3−6−9) 这条路径，包含的边的个数为 4 ，所以答案是 4 。
+
+Input
+第 1 行：一个整数 n ，表示树上的节点个数。 (1≤n≤100000)
+第 2∼n 行：每行有两个整数 u,v 表示 u 与 v 之间有一条路径。 (1≤u,v≤n)
+
+Output
+输出一个整数，表示这棵树直径所包含的边的个数。
+
+Sample 1
+Input	Output
+10
+1 2
+2 3
+3 4
+3 5
+3 6
+3 7
+3 10
+6 8
+6 9
+4
+代码
+
+//
+#include<iostream>
+#include<algorithm>
+#include<vector>        //
+using namespace std;
+ 
+// 1<=n<=100000
+const int MAXN=1e5+6;
+ 
+vector<int> e[MAXN];
+int d_all[MAXN];
+int cnt_all[MAXN];
+ 
+void dfs( int son,int father,int d,int cnt )
+{
+    int i;
+    d_all[son]=d;           // 莫 +1
+    cnt_all[son]=cnt;       // 
+ 
+    for( i=0;i<e[son].size();i++ )
+    {
+        if( e[son][i]!=father )
+        {
+            dfs( e[son][i], son, d+1, cnt+1 );
+        }
+    }
+}
+ 
+int main()
+{
+    int n,a,b,i,maxa,maxb;
+ 
+    scanf("%d",&n);
+ 
+    for( i=0;i<n-1;i++ )
+    {
+        scanf("%d%d",&a,&b);
+        e[a].push_back( b );
+        e[b].push_back( a );
+    }
+    dfs( 1,-1,0,0 );
+ 
+    maxa=1;
+    for( i=1;i<=n;i++ )
+    {
+        if( d_all[i]>d_all[maxa] ) maxa=i;
+    }
+    dfs( maxa,-1,0,0 );
+ 
+    maxb=1;
+    for( i=1;i<=n;i++ )
+    {
+        if( d_all[i]>d_all[maxb] ) maxb=i;
+    }
+    printf("%d\n",cnt_all[maxb]);
+ 
+    return 0;
+}
+3. Invitation Cards
+在电视时代，参加剧院表演的人并不多。马利丁西亚的古董喜剧演员意识到了这一点。他们希望传播剧院，尤其是古董喜剧。他们印制了包含所有必要信息和节目安排的邀请卡。许多学生被雇来在公众中分发这些邀请函。每位学生志愿者被分配了一个特定的公交站，他们整天待在那里，向乘坐公交的人发放邀请函。学生们参加了一门特殊课程，学习如何影响他人，以及影响与抢劫之间的区别。
+交通系统非常特别：所有线路都是单向的，并且连接恰好两个站点。公交车每半小时从出发站出发，载着乘客。到达目的地后，公交车空车返回出发站，等待下一个整点半，例如 X:00 或 X:30，其中 'X' 表示小时。两个站点之间的交通费用由特殊表格给出，并且需当场支付。线路的规划方式是，每个往返（即从同一站点出发并返回）都经过一个中央检查站（CCS），每位乘客都必须经过全面检查，包括身体扫描。
+
+所有 ACM 学生成员每天早上从 CCS 出发。每位志愿者都要前往一个预定的站点邀请乘客。志愿者的数量与站点数量相同。一天结束时，所有学生都会返回 CCS。你需要编写一个计算机程序，帮助 ACM 最小化每天为其员工的交通费用。
+ 
+
+输入
+输入由 N 个案例组成。第一行仅包含一个正整数 N。接下来是各个案例。每个案例以一行开始，包含恰好两个整数 P 和 Q，1 <= P,Q <= 1000000。P 是站点的数量，包括 CCS，Q 是公交线路的数量。然后有 Q 行，每行描述一条公交线路。每条线路包含恰好三个数字 - 出发站、目的站和价格。CCS 用数字 1 表示。价格为正整数，其总和小于 1000000000。你还可以假设从任何站点到任何其他站点总是可以到达。
+
+输出
+对于每个案例，打印一行，包含 ACM 每天为其志愿者的旅行费用所需支付的最小金额。
+
+示例
+Input	Output
+2
+2 2
+1 2 13
+2 1 33
+4 6
+1 2 10
+2 1 60
+1 3 20
+3 4 10
+2 4 5
+4 1 50
+46
+210
+代码
+
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <iostream>
+using namespace std;
+const int N = 1000005;
+struct E {
+	int v, w, next;
+}e[N], re[N];
+struct Node {
+	int v, d;
+	Node(int v, int d):v(v), d(d){}
+	bool operator < (const Node &w)const {
+		return d > w.d;
+	}
+};
+int t, n, m, len, rlen, head[N], rhead[N], d[N];
+bool vis[N];
+void add(int u, int v, int w) {
+	e[len].v = v;
+	e[len].next = head[u];
+	e[len].w = w;
+	head[u] = len++;
+}
+void radd(int u, int v, int w) {
+	re[rlen].v = v;
+	re[rlen].next = rhead[u];
+	re[rlen].w = w;
+	rhead[u] = rlen++;
+}
+void dijkstra(int u) {
+	memset(d, 0x3f, sizeof(d));
+	memset(vis, false, sizeof(vis));
+	d[u] = 0;
+	priority_queue<Node> q; 
+	q.push(Node(u, 0));
+	while (!q.empty()) {
+		u = q.top().v;
+		q.pop();
+		if (vis[u]) continue;
+		vis[u] = true;
+		for (int j = head[u]; j; j = e[j].next) { 
+			int v = e[j].v;
+			int w = e[j].w;
+			if (!vis[v] && d[v] > d[u] + w) {
+				d[v] = d[u] +w;
+				q.push(Node(v, d[v]));
+			}
+		}
+	}
+}
+ 
+int main() {
+	scanf("%d", &t);
+	while (t--) {
+		scanf("%d%d", &n, &m);
+		len = 1, rlen = 1;
+		memset(head, 0, sizeof(head));
+		memset(rhead, 0, sizeof(head));
+		int u, v, w;
+		for (int i = 1; i <= m; i++) {
+			scanf("%d%d%d", &u, &v, &w);
+			add(u, v, w);
+			radd(v, u, w); //反向建图 
+		}
+		dijkstra(1);
+		int ans = 0;
+		for (int i = 1; i <= n; i++) ans += d[i];
+		memcpy(head, rhead, sizeof(rhead));
+		memcpy(e, re, sizeof(re));
+		dijkstra(1);		
+		for (int i = 1; i <= n; i++) ans += d[i];
+		printf("%d\n", ans);
+	} 
+	return 0;
+}
+4.战略游戏
+题目背景
+Bob 喜欢玩电脑游戏，特别是战略游戏。但是他经常无法找到快速玩过游戏的办法。现在他有个问题。
+
+题目描述
+他要建立一个古城堡，城堡中的路形成一棵无根树。他要在这棵树的结点上放置最少数目的士兵，使得这些士兵能瞭望到所有的路。
+
+注意，某个士兵在一个结点上时，与该结点相连的所有边将都可以被瞭望到。
+
+请你编一程序，给定一树，帮 Bob 计算出他需要放置最少的士兵。
+
+输入格式
+第一行一个整数 n，表示树中结点的数目。
+
+第二行至第 n+1 行，每行描述每个结点信息，依次为：一个整数 i，代表该结点标号，一个自然数 k，代表后面有 k 条无向边与结点 i 相连。接下来 k 个整数，分别是每条边的另一个结点标号 r1​,r2​,⋯,rk​，表示 i 与这些点间各有一条无向边相连。
+
+对于一个 n 个结点的树，结点标号在 0 到 n−1 之间，在输入数据中每条边只出现一次。保证输入是一棵树。
+
+输出格式
+输出文件仅包含一个整数，为所求的最少的士兵数目。
+
+输入输出样例
+输入 #1复制
+
+4
+0 1 1
+1 2 2 3
+2 0
+3 0
+输出 #1复制
+
+1
+说明/提示
+数据规模与约定
+对于全部的测试点，保证 1≤n≤1500。
+
+代码
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+using namespace std;
+#define int long long
+#define INF 0x3f3f3f3f3f3f3f3f
+#define N (int)(2e3+15)
+ 
+int n,dp[N][2];
+vector<int> vec[N];
+void addEdge(int u,int v)
+{
+    vec[u].push_back(v);
+    vec[v].push_back(u);
+}
+void dfs(int u,int f)
+{
+    dp[u][1]=1;dp[u][0]=0;
+    for(int v : vec[u])
+    {
+        if(v==f)continue;
+        dfs(v,u);
+        dp[u][0]+=dp[v][1];
+        dp[u][1]+=min(dp[v][1],dp[v][0]);
+    }
+}
+signed main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    // freopen("check.in","r",stdin);
+    // freopen("check.out","w",stdout);
+    cin >> n;
+    for(int i=1,u,v,m; i<=n; i++)
+    {
+        cin >> u >> m;
+        for(int j=1; j<=m; j++)
+            cin >> v,addEdge(u+1,v+1);
+    }
+    dfs(1,1);
+    cout << min(dp[1][0],dp[1][1]) << endl;
+    return 0;
+}
+5.飞行路线
+题目描述
+Alice 和 Bob 现在要乘飞机旅行，他们选择了一家相对便宜的航空公司。该航空公司一共在 n 个城市设有业务，设这些城市分别标记为 0 到 n−1，一共有 m 种航线，每种航线连接两个城市，并且航线有一定的价格。
+
+Alice 和 Bob 现在要从一个城市沿着航线到达另一个城市，途中可以进行转机。航空公司对他们这次旅行也推出优惠，他们可以免费在最多 k 种航线上搭乘飞机。那么 Alice 和 Bob 这次出行最少花费多少？
+
+输入格式
+第一行三个整数 n,m,k，分别表示城市数，航线数和免费乘坐次数。
+
+接下来一行两个整数 s,t，分别表示他们出行的起点城市编号和终点城市编号。
+
+接下来 m 行，每行三个整数 a,b,c，表示存在一种航线，能从城市 a 到达城市 b，或从城市 b 到达城市 a，价格为 c。
+
+输出格式
+输出一行一个整数，为最少花费。
+
+输入输出样例
+输入 #1复制
+
+5 6 1
+0 4
+0 1 5
+1 2 5
+2 3 5
+3 4 5
+2 3 3
+0 2 100
+输出 #1复制
+
+8
+说明/提示
+数据规模与约定
+对于 30% 的数据，2≤n≤50，1≤m≤300，k=0。
+
+对于 50% 的数据，2≤n≤600，1≤m≤6×，0≤k≤1。
+
+对于 100% 的数据，2≤n≤，1≤m≤5×，0≤k≤10，0≤s,t,a,b<n，a=b，0≤c≤。
+
+另外存在一组 hack 数据
+
+​​​​​​​代码
+
+#include <queue>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+ 
+#define x first
+#define y second
+ 
+using namespace std;
+ 
+typedef pair<int, int> PII;
+ 
+const int N = 200010, M = 500010 * 6;
+ 
+int S, E;
+int n, m, k;
+bool st[N];
+int dist[N];
+int h[N], e[M], ne[M], w[M], idx;
+ 
+void add(int a, int b, int c)
+{
+    e[idx] = b;
+    w[idx] = c;
+    ne[idx] = h[a];
+    h[a] = idx;
+    idx ++ ;
+}
+ 
+void dijkstra()
+{
+    memset(dist, 0x3f, sizeof dist);
+    dist[S] = 0;
+    priority_queue<PII, vector<PII>, greater<PII>> q;
+    q.push({dist[S], S});
+    
+    while (q.size())
+    {
+        auto t = q.top();
+        q.pop();
+        
+        int ver = t.y;
+        if (st[ver]) continue;
+        st[ver] = true;
+        
+        for (int i = h[ver]; i != -1; i = ne[i])
+        {
+            int j = e[i];
+            if (dist[j] > dist[ver] + w[i])
+            {
+                dist[j] = dist[ver] + w[i];
+                q.push({dist[j], j});
+            }
+        }
+    }
+}
+ 
+ 
+int main()
+{
+    cin >> n >> m >> k >> S >> E;
+    memset(h, -1, sizeof h);
+    for (int i = 0; i < m; i ++ )
+    {
+        int a, b, c;
+        scanf("%d %d %d", &a, &b, &c);
+        add(a, b, c), add(b, a, c);
+        for (int j = 1; j <= k; j ++ )
+        {
+            add(a + (j - 1) * n, b + j * n, 0);
+            add(b + (j - 1) * n, a + j * n, 0);
+            add(a + j * n, b + j * n, c);
+            add(b + j * n, a + j * n, c);
+        }
+    }
+    
+    dijkstra();
+    
+    int ans = 0x3f3f3f3f;
+    for (int i = 0; i <= k; i ++ ) ans = min(ans, dist[E + i * n]); 
+    
+    cout << ans << endl;
+    
+    return 0;
+}
+6.二叉苹果树
+题目描述
+有一棵苹果树，如果树枝有分叉，一定是分二叉（就是说没有只有一个儿子的结点）
+
+这棵树共有 N 个结点（叶子点或者树枝分叉点），编号为 1∼N，树根编号一定是 1。
+
+我们用一根树枝两端连接的结点的编号来描述一根树枝的位置。下面是一颗有 4 个树枝的树：
+
+2   5
+ \ / 
+  3   4
+   \ /
+    1
+现在这颗树枝条太多了，需要剪枝。但是一些树枝上长有苹果。
+
+给定需要保留的树枝数量，求出最多能留住多少苹果。
+
+输入格式
+第一行 2 个整数 N 和 Q，分别表示表示树的结点数，和要保留的树枝数量。
+
+接下来 N−1 行，每行 3 个整数，描述一根树枝的信息：前 2 个数是它连接的结点的编号，第 3 个数是这根树枝上苹果的数量。
+
+输出格式
+一个数，最多能留住的苹果的数量。
+
+输入输出样例
+输入 #1复制
+
+5 2
+1 3 1
+1 4 10
+2 3 20
+3 5 20
+输出 #1复制
+
+21
+说明/提示
+1⩽Q<N⩽100，每根树枝上的苹果 ⩽3×。
+
+​​​​​​​代码
+
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+ 
+const int maxn=105;
+ 
+struct node{
+    int v,w,nex;
+}edge[maxn<<1];
+ 
+int n,q,cnt,head[maxn],siz[maxn];
+int dp[maxn][maxn];
+ 
+void adde(int u,int v,int w){
+    edge[++cnt].v=v;
+    edge[cnt].w=w;
+    edge[cnt].nex=head[u];
+    head[u]=cnt;
+}
+ 
+void dfs(int x,int f){
+    for(int i=head[x];i;i=edge[i].nex){
+        int y=edge[i].v;
+        if(y==f) continue;
+        dfs(y,x);
+        siz[x]+=siz[y]+1;
+        for(int j=min(siz[x],q);j;--j)
+            for(int k=0;k<=min(siz[y],j-1);++k)
+                dp[x][j]=max(dp[x][j],dp[x][j-1-k]+dp[y][k]+edge[i].w);
+    }
+}
+ 
+int main(){
+    scanf("%d%d",&n,&q);
+    for(int i=1;i<n;++i){
+        int u,v,w;
+        scanf("%d%d%d",&u,&v,&w);
+        adde(u,v,w);
+        adde(v,u,w);
+    }
+    dfs(1,-1);
+    printf("%d\n",dp[1][q]);
+    return 0;
+}
+专题总结
+该专题需要思考的内容较多，代码也偏长，需要更多的实践和总结。
